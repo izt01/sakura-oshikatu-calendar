@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>櫻坂46 — カレンダー</title>
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-sakura.jpg">
 <meta name="theme-color" content="#8b2252">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -265,8 +266,8 @@ function renderCalendar() {
   // Birthday map
   const bdayMap = {};
   ACTIVE_MEMBERS.forEach(m => {
-    const [mm,dd] = m.birthday.split('-').map(Number);
-    if (mm === curMonth+1) (bdayMap[dd] = bdayMap[dd]||[]).push(m);
+    const _bp1 = m.birthday.split('-'); const mm1 = parseInt(_bp1[_bp1.length-2]); const dd1 = parseInt(_bp1[_bp1.length-1]);
+    if (mm1 === curMonth+1) (bdayMap[dd1] = bdayMap[dd1]||[]).push(m);
   });
 
   // Event map
@@ -308,8 +309,8 @@ function renderCalendar() {
 
 function onDayClick(d) {
   const bdays = ACTIVE_MEMBERS.filter(m => {
-    const [mm,dd] = m.birthday.split('-').map(Number);
-    return mm===curMonth+1 && dd===d;
+    const _bp2 = m.birthday.split('-'); const mm2 = parseInt(_bp2[_bp2.length-2]); const dd2 = parseInt(_bp2[_bp2.length-1]);
+    return mm2===curMonth+1 && dd2===d;
   });
   if (!bdays.length) return;
   const m = bdays[0];
@@ -326,8 +327,8 @@ function renderUpcoming() {
   ACTIVE_MEMBERS.forEach(m => {
     const diff = daysUntilBirthday(m.birthday);
     if (diff <= 60) {
-      const [mm,dd] = m.birthday.split('-').map(Number);
-      items.push({ type:'bday', name:`${m.name}の誕生日`, dateStr:`${mm}月${dd}日`, icon:m.avatar, diff, href:`member-detail.html?id=${m.id}` });
+      const _bp3 = m.birthday.split('-'); const mm3 = parseInt(_bp3[_bp3.length-2]); const dd3 = parseInt(_bp3[_bp3.length-1]);
+      items.push({ type:'bday', name:`${m.name}の誕生日`, dateStr:`${mm3}月${dd3}日`, icon:m.avatar, diff, href:`member-detail.html?id=${m.id}` });
     }
   });
 
