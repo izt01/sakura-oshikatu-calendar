@@ -30,7 +30,7 @@ function injectNav(activePage) {
           <button class="drawer-close" onclick="closeDrawerDirect()">✕</button>
         </div>
         <div class="drawer-nav">${navItems}</div>
-        <div class="drawer-footer">✿ 櫻坂46 · Hanagoyomi ✿</div>
+        <div class="drawer-footer">✿ 櫻坂46 · sakurazaka calendar ✿</div>
       </nav>
     </div>
 
