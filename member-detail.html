@@ -219,7 +219,7 @@
 <script src="sakura.js"></script>
 <script src="notify.js"></script>
 <script>
-document.getElementById('headerMount').outerHTML = headerHTML('花暦', '✿ メンバー詳細 ✿');
+document.getElementById('headerMount').outerHTML = headerHTML('櫻坂46', '✿ メンバー詳細 ✿');
 initNotifications();
 injectNav('members.html');
 
@@ -236,7 +236,7 @@ if (!m) {
       メンバーが見つかりませんでした
     </div>`;
 } else {
-  document.title = `花暦 — ${m.name}`;
+  document.title = `櫻坂46 — ${m.name}`;
   renderDetail();
 }
 
