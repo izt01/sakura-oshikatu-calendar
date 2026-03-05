@@ -66,8 +66,8 @@ self.addEventListener('message', e => {
     scheduledTimers[tag] = setTimeout(() => {
       self.registration.showNotification(title, {
         body,
-        icon:    './icons/icon-sakura.png',
-        badge:   './icons/icon-sakura.png',
+        icon:    './icons/icon-sakura.jpg',
+        badge:   './icons/icon-sakura.jpg',
         tag,
         vibrate: [200, 100, 200],
         data:    { url: './events.html' },
