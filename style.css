@@ -459,11 +459,29 @@ body::after {
   padding: 26px 22px 44px;
   width: 100%;
   max-width: var(--page-max);
+  max-height: 90vh;
+  overflow-y: auto;
   animation: slideUp 0.32s cubic-bezier(0.34,1.4,0.64,1);
   border-top: 1.5px solid var(--sakura-2);
   position: relative;
-  overflow: hidden;
 }
+/* ✕ 閉じるボタン */
+.modal-close-btn {
+  position: absolute;
+  top: 16px; right: 18px;
+  width: 32px; height: 32px;
+  background: var(--sakura-1);
+  border: 1.5px solid var(--sakura-2);
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--sumi-light);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.modal-close-btn:active { background: var(--sakura-2); }
 .modal::before {
   content: '✿  ✿  ✿  ✿  ✿  ✿  ✿  ✿';
   position: absolute;
