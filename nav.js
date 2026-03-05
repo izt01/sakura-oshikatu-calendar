@@ -10,6 +10,7 @@ function injectNav(activePage) {
     { href: 'calendar.html',      icon: '📅', label: '櫻坂46（カレンダー）' },
     { href: 'members.html',       icon: '🌸', label: '推しメン一覧' },
     { href: 'events.html',        icon: '✿',  label: '行事帳' },
+    { href: 'gallery.html',       icon: '📷', label: 'フォトギャラリー' },
   ];
 
   const navItems = pages.map(p => {
