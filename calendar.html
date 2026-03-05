@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>櫻坂46 — カレンダー</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b2252">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="櫻坂46">
 <link rel="stylesheet" href="style.css">
 <style>
 /* ── CALENDAR SPECIFIC ── */
@@ -181,15 +186,6 @@
 .upcoming-badge.bday  { background: var(--sakura-1); color: var(--ume); border: 1px solid var(--sakura-2); }
 .upcoming-badge.event { background: rgba(90,122,90,0.1); color: var(--matcha); border: 1px solid rgba(90,122,90,0.3); }
 </style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c45070">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-  }
-</script>
-
 </head>
 <body>
 
@@ -241,8 +237,10 @@
 <script src="data.js"></script>
 <script src="nav.js"></script>
 <script src="sakura.js"></script>
+<script src="notify.js"></script>
 <script>
 document.getElementById('headerMount').outerHTML = headerHTML('櫻坂46', '✿ カレンダー ✿');
+initNotifications();
 injectNav('calendar.html');
 
 let curYear  = new Date().getFullYear();
@@ -364,6 +362,13 @@ function renderUpcoming() {
 }
 
 renderCalendar();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js');
+  });
+}
 </script>
 </body>
 </html>
