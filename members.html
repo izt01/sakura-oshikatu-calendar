@@ -254,7 +254,9 @@ function toggleOshi(id, ev) {
 function renderMembers() {
   const today = new Date();
   document.getElementById('membersGrid').innerHTML = ACTIVE_MEMBERS.map(m => {
-    const [mm,dd] = m.birthday.split('-').map(Number);
+    const parts = m.birthday.split('-');
+    const mm = parseInt(parts[parts.length - 2]);
+    const dd = parseInt(parts[parts.length - 1]);
     let next = new Date(today.getFullYear(), mm-1, dd);
     if (next < today) next.setFullYear(today.getFullYear()+1);
     const diff    = Math.round((next-today)/86400000);

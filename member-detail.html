@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>花暦 — メンバー詳細</title>
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-sakura.jpg">
 <meta name="theme-color" content="#8b2252">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -241,7 +242,7 @@ if (!m) {
 
 function renderDetail() {
   const diff    = daysUntilBirthday(m.birthday);
-  const [mm,dd] = m.birthday.split('-').map(Number);
+  const [yyyy,mm,dd] = m.birthday.split('-').map(Number);
   const isOshi  = oshiSet.has(m.id);
 
   // 拡張子で画像か絵文字かを判定
@@ -277,11 +278,11 @@ function renderDetail() {
     <div class="info-grid">
       <div class="info-tile">
         <div class="info-tile-label">誕生日</div>
-        <div class="info-tile-value">${mm}月${dd}日</div>
+        <div class="info-tile-value">${yyyy}年${mm}月${dd}日</div>
       </div>
       <div class="info-tile">
         <div class="info-tile-label">年齢</div>
-        <div class="info-tile-value">${m.age ? m.age + '歳' : '—'}</div>
+        <div class="info-tile-value">${calcAge(m.birthday) !== null ? calcAge(m.birthday) + '歳' : '—'}</div>
       </div>
       <div class="info-tile">
         <div class="info-tile-label">身長</div>
