@@ -9,15 +9,15 @@
   "theme_color": "#8b2252",
   "icons": [
     {
-      "src": "icons/icon-sakura.png",
+      "src": "icons/icon-sakura.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-zigouzitoku.png",
+      "src": "icons/icon-zigouzitoku.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ],
