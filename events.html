@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>櫻坂46 — 行事帳</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b2252">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="櫻坂46">
 <link rel="stylesheet" href="style.css">
 <style>
 /* ── EVENTS PAGE ── */
@@ -61,6 +66,14 @@
   font-family: 'Noto Serif JP', serif;
   font-size: 10px;
   color: var(--sumi-light);
+}
+.event-date-time {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ume);
+  margin-top: 2px;
+  letter-spacing: 0.04em;
 }
 .event-info { flex: 1; }
 .event-info-name {
@@ -127,16 +140,31 @@
   box-shadow: 0 3px 14px rgba(139,34,82,0.28);
 }
 .event-tab:active { transform: scale(0.95); }
+/* ── 通知ボタン ── */
+.notif-toggle-btn {
+  padding: 7px 13px;
+  border-radius: 20px;
+  border: 1.5px solid var(--sakura-2);
+  background: rgba(255,255,255,0.8);
+  font-family: 'Noto Serif JP', serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sumi-light);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.notif-toggle-btn.notif-on {
+  background: var(--sakura-1);
+  border-color: var(--sakura-3);
+  color: var(--ume);
+}
+.notif-toggle-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
 </style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c45070">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-  }
-</script>
-
 </head>
 <body>
 
@@ -148,7 +176,10 @@
   <div class="page-content page-enter">
     <div class="events-header">
       <div class="events-title">行事帳</div>
-      <button class="btn-icon" onclick="openModal()" aria-label="行事を追加">＋</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="notifToggleBtn" class="notif-toggle-btn">🔔 通知を許可する</button>
+        <button class="btn-icon" onclick="openModal()" aria-label="行事を追加">＋</button>
+      </div>
     </div>
 
     <!-- Tabs -->
@@ -176,6 +207,14 @@
       <input class="form-input" id="evDate" type="date">
     </div>
     <div class="form-group">
+      <label class="form-label">時間（任意）</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="form-input" id="evTime" type="time" style="flex:1">
+        <button type="button" onclick="clearTime()" style="padding:11px 14px;border-radius:13px;border:1.5px solid var(--sakura-2);background:rgba(255,255,255,0.8);font-family:'Noto Sans JP',sans-serif;font-size:12px;color:var(--sumi-light);cursor:pointer;white-space:nowrap">時間なし</button>
+      </div>
+      <div style="font-size:10px;color:var(--sumi-light);margin-top:5px;font-family:'Noto Serif JP',serif;letter-spacing:0.04em">✿ 時間を設定すると、その時刻を基準に通知が届きます</div>
+    </div>
+    <div class="form-group">
       <label class="form-label">覚え書き</label>
       <input class="form-input" id="evNote" placeholder="場所・詳細など" type="text">
     </div>
@@ -190,6 +229,7 @@
 <script src="data.js"></script>
 <script src="nav.js"></script>
 <script src="sakura.js"></script>
+<script src="notify.js"></script>
 <script>
 document.getElementById('headerMount').outerHTML = headerHTML('行事帳', '✿ イベント管理 ✿');
 injectNav('events.html');
@@ -204,7 +244,8 @@ function setTab(mode, btn) {
   curTab = mode;
   document.querySelectorAll('.event-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderEvents();
+  initNotifications();
+renderEvents();
 }
 
 function renderEvents() {
@@ -216,8 +257,8 @@ function renderEvents() {
                  .sort((a,b) => new Date(a.date) - new Date(b.date));
 
   // Filter by tab
-  if (curTab === 'upcoming') events = events.filter(e => new Date(e.date+'T00:00:00') >= today);
-  if (curTab === 'past')     events = events.filter(e => new Date(e.date+'T00:00:00') <  today);
+  if (curTab === 'upcoming') events = events.filter(e => new Date((e.date + 'T' + (e.time || '00:00') + ':00')) >= new Date());
+  if (curTab === 'past')     events = events.filter(e => new Date((e.date + 'T' + (e.time || '23:59') + ':00')) < new Date());
 
   const el = document.getElementById('eventList');
   if (!events.length) {
@@ -229,16 +270,18 @@ function renderEvents() {
   }
 
   el.innerHTML = events.map(e => {
-    const d    = new Date(e.date+'T00:00:00');
+    const d    = new Date(e.date + 'T' + (e.time || '00:00') + ':00');
     const mo   = MONTHS_JP[d.getMonth()];
-    const diff = Math.round((d - today) / 86400000);
-    const diffStr = diff === 0 ? '今日！' : diff > 0 ? `あと${diff}日` : `${Math.abs(diff)}日前`;
+    const now2 = new Date();
+    const diff = Math.round((d - now2) / 86400000);
+    const diffStr = diff === 0 ? (e.time ? `今日 ${e.time}` : '今日！') : diff > 0 ? `あと${diff}日` : `${Math.abs(diff)}日前`;
     const isPast  = diff < 0;
     return `<div class="event-item">
       <div class="event-item-left">
         <div class="event-date-month">${mo}</div>
         <div class="event-date-day">${d.getDate()}</div>
         <div class="event-date-dow">${DOW[d.getDay()]}</div>
+        ${e.time ? `<div class="event-date-time">${e.time}</div>` : ''}
       </div>
       <div class="event-info">
         <div class="event-info-name">${e.name}</div>
@@ -253,6 +296,8 @@ function renderEvents() {
 
 function deleteEvent(idx) {
   const events = loadEvents();
+  const ev = events[idx];
+  if (ev) cancelEventNotifs(ev.id); // 通知キャンセル
   events.splice(idx, 1);
   saveEvents(events);
   renderEvents();
@@ -262,6 +307,7 @@ function deleteEvent(idx) {
 // ── MODAL ──
 function openModal() {
   document.getElementById('evDate').value  = new Date().toISOString().split('T')[0];
+  document.getElementById('evTime').value  = '';
   document.getElementById('evName').value  = '';
   document.getElementById('evNote').value  = '';
   selectedEmoji = '🎪';
@@ -282,20 +328,34 @@ function pickEmoji(emoji, el) {
   el.classList.add('selected');
 }
 
+function clearTime() {
+  document.getElementById('evTime').value = '';
+}
+
 function addEvent() {
   const name = document.getElementById('evName').value.trim();
   const date = document.getElementById('evDate').value;
   const note = document.getElementById('evNote').value.trim();
   if (!name || !date) { alert('行事の名前と日付を入力してください'); return; }
+  const time  = document.getElementById('evTime').value || '';
+  const event = { name, date, time, note, emoji: selectedEmoji, id: Date.now() };
   const events = loadEvents();
-  events.push({ name, date, note, emoji: selectedEmoji, id: Date.now() });
+  events.push(event);
   saveEvents(events);
+  scheduleEventNotifs(event); // 通知スケジュール
   document.getElementById('eventModal').classList.remove('open');
   updateNotifBadge();
   renderEvents();
 }
 
 renderEvents();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js');
+  });
+}
 </script>
 </body>
 </html>

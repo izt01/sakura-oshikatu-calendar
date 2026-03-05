@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>櫻坂46 — 推しメン一覧</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b2252">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="櫻坂46">
 <link rel="stylesheet" href="style.css">
 <style>
 /* ── FILTER BAR ── */
@@ -176,15 +181,6 @@
 }
 .oshi-toggle-btn:active { transform: scale(0.92); }
 </style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#c45070">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-  }
-</script>
-
 </head>
 <body>
 
@@ -220,8 +216,10 @@
 <script src="data.js"></script>
 <script src="nav.js"></script>
 <script src="sakura.js"></script>
+<script src="notify.js"></script>
 <script>
 document.getElementById('headerMount').outerHTML = headerHTML('推しメン', '✿ メンバー一覧 ✿');
+initNotifications();
 injectNav('members.html');
 
 let oshiSet     = loadOshi();
@@ -289,6 +287,13 @@ function renderMembers() {
 }
 
 renderMembers();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js');
+  });
+}
 </script>
 </body>
 </html>
